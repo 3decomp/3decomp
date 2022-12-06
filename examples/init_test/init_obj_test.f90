@@ -18,7 +18,8 @@ module decomp2d_extents
   end type processor_grid_extents
 
 contains
-  
+
+  ! Make a grid extents object of specified dimensionality
   subroutine make_grid_extents(ndim, grid)
 
     integer, intent(in) :: ndim
@@ -29,6 +30,7 @@ contains
     
   end subroutine make_grid_extents
 
+  ! Set the extent of a grid in a given dimension
   subroutine set_grid_extents(dim, n, grid)
 
     integer, intent(in) :: dim                 ! Which dimension to set
@@ -39,6 +41,7 @@ contains
 
   end subroutine set_grid_extents
 
+  ! Get the extent of a grid in a given dimension
   integer function get_grid_extents(dim, grid)
 
     integer, intent(in) :: dim
@@ -48,6 +51,7 @@ contains
 
   end function get_grid_extents
 
+  ! Get the dimensionality of a grid
   integer function get_grid_dimension(grid)
 
     class(grid_extents), intent(in) :: grid
@@ -56,6 +60,8 @@ contains
 
   end function get_grid_dimension
 
+  ! Free contents of a grid object.
+  ! Used as a type-bound finaliser.
   subroutine free_grid_extents(grid)
 
     type(grid_extents), intent(inout) :: grid
@@ -126,6 +132,7 @@ contains
     
   end subroutine run
 
+  ! Generic wrapper for testing initialisation objects.
   subroutine check_grid(grid)
 
     class(grid_extents), intent(in) :: grid
@@ -139,7 +146,10 @@ contains
     end select
 
   end subroutine check_grid
-  
+
+  ! Type-specific test of processor grid.
+  ! After initialisation the processor grid should have values whose product = the number of MPI
+  ! ranks.
   subroutine check_processor_grid(pgrid)
 
     type(processor_grid_extents), intent(in) :: pgrid
@@ -159,6 +169,7 @@ contains
     
   end subroutine check_processor_grid
 
+  ! Generic wrapper for the new initialisation prototype.
   subroutine decomp_2d_init_new(cgrid, pgrid)
 
     class(grid_extents), intent(in) :: cgrid
@@ -177,7 +188,10 @@ contains
     end select
     
   end subroutine decomp_2d_init_new
-  
+
+  ! Concrete implementation for the new initialisation prototype.
+  ! Currently this simply wraps the old initialisation subroutine, extracting and passing the
+  ! required information from the initialisation objects.
   subroutine decomp_2d_init_concrete(cgrid, pgrid)
 
     type(compute_grid_extents), intent(in) :: cgrid
